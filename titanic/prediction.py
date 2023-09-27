@@ -2,6 +2,7 @@
 Train model and generate prediction
 """
 # Import libraries
+import numpy as np
 import pandas as pd
 from preprocessing import preprocessing
 from sklearn.linear_model import LogisticRegression
@@ -18,7 +19,7 @@ def train(data, model):
     data = preprocessing(data, FEATURES + TARGET)
 
     xdata = pd.get_dummies(data[FEATURES])
-    ydata = data[TARGET]
+    ydata = np.array(data[TARGET])
 
     # Only options are top 3 models from notebook
     if model == "glm":
@@ -38,13 +39,19 @@ def train(data, model):
 # Generate prediction
 def predict(data, model):
     # Preprocessing
-    data = preprocessing(data, FEATURES)
+    data = preprocessing(data, FEATURES + ["PassengerId"])
 
-    xdata = pd.get_dummies(data)
+    data["Fare"].fillna(data["Fare"].median(), inplace=True)
+
+    id = data["PassengerId"]
+    xdata = pd.get_dummies(data[FEATURES])
 
     prediction = model.predict(xdata)
-
-    prediction.to_csv("prediction.csv")
+    prediction = pd.DataFrame({
+        "PassengerId": id,
+        "Survived": prediction
+    })
+    prediction.to_csv("prediction.csv", index=False)
 
 
 if __name__ == "__main__":
