@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 
 class DigitDataset(Dataset):
     def __init__(self, images, labels):
-        self.images = torch.tensor(images)/255.0
+        self.images = (torch.tensor(images)/255.0).unsqueeze(1)     # Match Conv2D input
         self.labels = labels
 
     def __len__(self):
@@ -33,7 +33,7 @@ def read_img(file_name:str) -> (np.ndarray, np.ndarray):
     return imgs, labels
 
 
-def data_load(imgs: np.ndarray, labels: np.ndarray, batch_size: int=16) -> DataLoader:
+def data_load(imgs: np.ndarray, labels: np.ndarray, batch_size: int=32) -> DataLoader:
     ds = DigitDataset(imgs, labels)
     return DataLoader(ds, batch_size=batch_size, shuffle=True)
 
