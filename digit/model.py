@@ -92,7 +92,7 @@ def test(model, loader):
             output = model(data)
             
             # calculate the loss on this batch
-            test_loss += loss_fn(output, target, reduction='sum').item()
+            test_loss += loss_fn(output, target)
             pred = output.data.max(1, keepdim=True)[1]
             correct += pred.eq(target.data.view_as(pred)).sum()
 
@@ -139,7 +139,6 @@ def train(model, optimizer, train_loader, test_loader, n_epochs=5, log_interval=
         model.train() # put the network in training mode
 
         for batch_idx, (data, target) in enumerate(train_loader):
-            data = data.unsqueeze(1)
             # Reset all gradients
             optimizer.zero_grad()
     
