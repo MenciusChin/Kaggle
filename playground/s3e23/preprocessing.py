@@ -21,6 +21,8 @@ from imblearn.pipeline import Pipeline
 # Read train data
 def read_train():
     data = pd.read_csv("data/train.csv")
+    original = pd.read_csv("data/jm1.csv")
+    data = data.append(original)
     data.drop("id", axis=1, inplace=True)
     return data.drop("defects", axis=1), data["defects"]
 
