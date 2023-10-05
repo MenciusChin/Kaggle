@@ -19,16 +19,19 @@ from imblearn.pipeline import Pipeline
 
 
 # Read train data
-def read_train():
+def read_train(original=False):
     data = pd.read_csv("data/train.csv")
     data.drop("id", axis=1, inplace=True)
 
-    original = pd.read_csv("data/jm1.csv")
-    TAR = ["uniq_Op", "uniq_Opnd", "total_Op", "total_Opnd", "branchCount"]
-    for col in TAR:
-        original[col].replace("?", 0.0, inplace=True)
+    if original:
+        # For original data it contains "?", we treat which as Missing Values
+        original = pd.read_csv("data/jm1.csv")
+        TAR = ["uniq_Op", "uniq_Opnd", "total_Op", "total_Opnd", "branchCount"]
+        for col in TAR:
+            original[col].replace("?", value=0, inplace=True)
+            original[col] = pd.to_numeric(original[col])
+        data = pd.concat([data, original])
 
-    data = pd.concat([data, original])
     return data.drop("defects", axis=1), data["defects"]
 
 
