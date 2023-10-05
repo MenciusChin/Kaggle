@@ -6,7 +6,7 @@ Python file for DefectNetwork and DefectDataset
 import numpy as np
 import pandas as pd
 
-from preprocessing import read_train, read_test, SMOTE_data, plot_dist, transform_X
+from preprocessing import read_train, read_test, SMOTE_data, transform_X
 
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
@@ -226,8 +226,6 @@ def prediction(model, write=False):
         file.to_csv("submission.csv")
     
     return file
-
-
 
 
 if __name__ == "__main__":

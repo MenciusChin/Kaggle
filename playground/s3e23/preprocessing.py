@@ -25,6 +25,7 @@ def read_train():
     return data.drop("defects", axis=1), data["defects"]
 
 
+# Read test data
 def read_test():
     data = pd.read_csv("data/test.csv")
     id = data["id"].values
