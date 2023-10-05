@@ -21,9 +21,14 @@ from imblearn.pipeline import Pipeline
 # Read train data
 def read_train():
     data = pd.read_csv("data/train.csv")
-    original = pd.read_csv("data/jm1.csv")
-    data = data.append(original)
     data.drop("id", axis=1, inplace=True)
+
+    original = pd.read_csv("data/jm1.csv")
+    TAR = ["uniq_Op", "uniq_Opnd", "total_Op", "total_Opnd", "branchCount"]
+    for col in TAR:
+        original[col].replace("?", 0.0, inplace=True)
+
+    data = pd.concat([data, original])
     return data.drop("defects", axis=1), data["defects"]
 
 
