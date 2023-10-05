@@ -11,15 +11,25 @@ import seaborn as sns
 
 from collections import Counter
 
+from sklearn.preprocessing import StandardScaler
+
 from imblearn.over_sampling import SMOTE
 from imblearn.under_sampling import RandomUnderSampler
 from imblearn.pipeline import Pipeline
 
 
+# Read train data
 def read_train():
     data = pd.read_csv("data/train.csv")
     data.drop("id", axis=1, inplace=True)
     return data.drop("defects", axis=1), data["defects"]
+
+
+def read_test():
+    data = pd.read_csv("data/test.csv")
+    id = data["id"].values
+    data.drop("id", axis=1, inplace=True)
+    return data, id
 
 
 # Check distributions
@@ -32,14 +42,16 @@ def plot_dist(data, log_scale=False):
             if idx > len(cols)-1:
                 return
             sns.histplot(ax=axes[i, j], data=data[cols[idx]] + 0.0001, kde=True, bins=15, log_scale=log_scale)
+    plt.show()
 
 
+# SMOTE sampling to have 2:1 Majority and Minority classes
 def SMOTE_data(X, y):
     # Calculate Ratios
     counter = Counter(y.to_numpy().squeeze())
     total = dict(counter)[False] + dict(counter)[True]
-    SMOTE_ratio = total // 2 / dict(counter)[False]
-    RUS_ratio = 1
+    SMOTE_ratio = 1 / 2
+    RUS_ratio = 2 / 3
 
     # define pipeline
     over = SMOTE(sampling_strategy=SMOTE_ratio)
@@ -50,3 +62,13 @@ def SMOTE_data(X, y):
     X, y = pipeline.fit_resample(X, y)
 
     return X, y
+
+def transform_X(X):
+    ss = StandardScaler()
+    return ss.fit_transform(np.log(X + .001))
+
+
+if __name__ == "__main__":
+    X, y = read_train()
+    X, y = SMOTE_data(X, y)
+    
